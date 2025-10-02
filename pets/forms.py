@@ -34,6 +34,7 @@ class MascotaForm(forms.ModelForm):
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "especie": forms.Select(attrs={"class": "form-select"}),
             "tamaño": forms.Select(attrs={"class": "form-select"}),
+            "sexo": forms.Select(attrs={"class": "form-select"}, choices=Mascota.SEXO_CHOICES),
             "ciudad": forms.TextInput(attrs={"class": "form-control"}),
             "foto": forms.ClearableFileInput(attrs={"class": "form-control"}),
             "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 3}),

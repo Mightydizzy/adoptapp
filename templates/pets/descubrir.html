@@ -11,8 +11,16 @@
       <img src="{{ mascota.foto.url }}" class="card-img-top rounded-top-4" style="height: 60%; object-fit: cover;" alt="{{ mascota.nombre }}">
       <div class="card-body text-center">
         <h4>{{ mascota.nombre }}</h4>
-        <p>{{ mascota.especie|capfirst }} · {{ mascota.edad_legible }} · {{ mascota.ciudad }}</p>
-        <p class="text-muted">{{ mascota.descripcion|default:"Sin descripción" }}</p>
+        <p>
+          {{ mascota.especie|capfirst }} · 
+          {% if mascota.sexo == "M" %}
+            ♂ Macho
+          {% elif mascota.sexo == "H" %}
+            ♀ Hembra
+          {% endif %} ·
+          {{ mascota.edad_legible }} · {{ mascota.ciudad }}
+          {{ mascota.tamaño|capfirst }} · {{ mascota.descripcion }}
+        </p>
       </div>
     </div>
     {% endfor %}

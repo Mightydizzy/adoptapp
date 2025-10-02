@@ -14,6 +14,10 @@ class Mascota(models.Model):
         ("mediano", "Mediano"),
         ("grande", "Grande"),
     ]
+    SEXO_CHOICES = [
+        ("M", "Macho"),
+        ("H", "Hembra"),
+    ]
 
     nombre = models.CharField(max_length=50)
     especie = models.CharField(max_length=20, choices=SPECIES)
