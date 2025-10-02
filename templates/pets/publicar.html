@@ -7,19 +7,67 @@
     <h2 class="mb-4">Publicar Mascota</h2>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      {{ form.non_field_errors }}
-      {% for field in form %}
-        <div class="mb-3">
-          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-          {{ field }}
-          {% if field.errors %}
-            <div class="text-danger">{{ field.errors|join:", " }}</div>
-          {% endif %}
-        </div>
-      {% endfor %}
+
+      <div class="mb-3">
+        <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre</label>
+        {{ form.nombre }}
+        {% if form.nombre.errors %}
+          <div class="text-danger">{{ form.nombre.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.especie.id_for_label }}" class="form-label">Especie</label>
+        {{ form.especie }}
+        {% if form.especie.errors %}
+          <div class="text-danger">{{ form.especie.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.sexo.id_for_label }}" class="form-label">Sexo</label>
+        {{ form.sexo }}
+        {% if form.sexo.errors %}
+          <div class="text-danger">{{ form.sexo.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.tamaño.id_for_label }}" class="form-label">Tamaño</label>
+        {{ form.tamaño }}
+        {% if form.tamaño.errors %}
+          <div class="text-danger">{{ form.tamaño.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.ciudad.id_for_label }}" class="form-label">Ciudad</label>
+        {{ form.ciudad }}
+        {% if form.ciudad.errors %}
+          <div class="text-danger">{{ form.ciudad.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.foto.id_for_label }}" class="form-label">Foto</label>
+        {{ form.foto }}
+        {% if form.foto.errors %}
+          <div class="text-danger">{{ form.foto.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.descripcion.id_for_label }}" class="form-label">Descripción</label>
+        {{ form.descripcion }}
+        {% if form.descripcion.errors %}
+          <div class="text-danger">{{ form.descripcion.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
       <button type="submit" class="btn btn-custom w-100">Publicar</button>
+
       {% if form.errors %}
-      <div class="alert alert-danger">
+      <div class="alert alert-danger mt-3">
         <ul>
           {% for field, errors in form.errors.items %}
             <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
