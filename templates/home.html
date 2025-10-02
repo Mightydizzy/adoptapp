@@ -2,12 +2,45 @@
 {% block title %}Inicio - Adoptapp{% endblock %}
 
 {% block content %}
-<div class="text-center">
-  <h1 class="mb-4">Bienvenido a Adoptapp 🐾</h1>
-  {% if user.is_authenticated %}
-    <p>Hola <strong>{{ user.first_name }}</strong>, ya estás conectado.</p>
-  {% else %}
-    <p>Para comenzar, <a href="{% url 'login' %}">inicia sesión</a> o <a href="{% url 'signup' %}">regístrate</a>.</p>
-  {% endif %}
+<div class="container mt-5">
+  <div class="text-center mb-5">
+    <img src="{% static 'img/logo_home.png' %}" alt="Logo Adoptapp" style="max-height:150px;">
+    <h1 class="mt-3">¿Qué es Adoptapp?</h1>
+    <p class="lead">La plataforma que conecta mascotas sin hogar con personas que quieren adoptar.</p>
+  </div>
+
+  <div class="row text-center">
+    <div class="col-md-4 mb-4">
+      <h3>🐾 ¿Por qué existe?</h3>
+      <p>
+        Adoptapp nace para reducir la cantidad de animales abandonados, creando un puente 
+        entre rescatistas, refugios y familias que buscan dar amor a una mascota.
+      </p>
+    </div>
+    <div class="col-md-4 mb-4">
+      <h3>⚡ ¿Cómo funciona?</h3>
+      <p>
+        Crea tu cuenta, revisa mascotas disponibles en tu ciudad y da <strong>like</strong> 
+        a las que te interesen. Si te arrepientes, puedes darles una <em>segunda oportunidad</em>.
+      </p>
+    </div>
+    <div class="col-md-4 mb-4">
+      <h3>💙 Nuestra misión</h3>
+      <p>
+        Lograr que cada perrito y gatito encuentre un hogar definitivo, usando la tecnología 
+        para que el proceso de adopción sea fácil, seguro e inclusivo.
+      </p>
+    </div>
+  </div>
+
+  <!-- Botones principales -->
+  <div class="text-center mt-5">
+    <a href="{% url 'descubrir' %}" class="btn btn-success btn-lg me-3">
+      Quiero adoptar ♥
+    </a>
+    <a href="{% url 'publicar' %}" class="btn btn-primary btn-lg">
+      Quiero dar en adopción ♥
+    </a>
+  </div>
 </div>
 {% endblock %}
