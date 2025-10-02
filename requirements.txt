@@ -1,0 +1,9 @@
+django
+djangorestframework
+django-bootstrap-v5
+Pillow
+django-cloudinary-storage
+python-decouple
+cloudinary
+psycopg2-binary 
+dj-database-url 

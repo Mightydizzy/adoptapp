@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Inicio - Adoptapp{% endblock %}
+
+{% block content %}
+<div class="text-center">
+  <h1 class="mb-4">Bienvenido a Adoptapp 🐾</h1>
+  {% if user.is_authenticated %}
+    <p>Hola <strong>{{ user.first_name }}</strong>, ya estás conectado.</p>
+  {% else %}
+    <p>Para comenzar, <a href="{% url 'login' %}">inicia sesión</a> o <a href="{% url 'signup' %}">regístrate</a>.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Descubrir Mascotas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center mt-4">
+  <div id="card-container" class="position-relative" style="width: 350px; height: 500px;">
+    {% for mascota in mascotas %}
+    <div class="card position-absolute w-100 h-100 shadow-lg rounded-4 mascota-card"
+         data-id="{{ mascota.id }}"
+         style="background: white; display: {% if forloop.first %}block{% else %}none{% endif %};">
+      <img src="{{ mascota.foto.url }}" class="card-img-top rounded-top-4" style="height: 60%; object-fit: cover;" alt="{{ mascota.nombre }}">
+      <div class="card-body text-center">
+        <h4>{{ mascota.nombre }}</h4>
+        <p>{{ mascota.especie|capfirst }} · {{ mascota.edad_legible }} · {{ mascota.ciudad }}</p>
+        <p class="text-muted">{{ mascota.descripcion|default:"Sin descripción" }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="d-flex justify-content-center mt-3 gap-5">
+  <button class="btn btn-outline-danger btn-lg" id="btn-descartar">✖</button>
+  <button class="btn btn-outline-success btn-lg" id="btn-like">❤</button>
+</div>
+<div class="d-flex justify-content-center mt-4">
+  <a href="{% url 'segunda_oportunidad' %}" class="btn btn-outline-secondary">
+    🐾 Ver Segunda Oportunidad
+  </a>
+</div>
+
+
+<script>
+const cards = document.querySelectorAll(".mascota-card");
+let currentIndex = 0;
+
+function showNextCard() {
+  if (currentIndex < cards.length - 1) {
+    cards[currentIndex].style.display = "none";
+    currentIndex++;
+    cards[currentIndex].style.display = "block";
+  } else {
+    document.getElementById("card-container").innerHTML = "<p>No hay más mascotas disponibles</p>";
+  }
+}
+
+function reaccionar(accion) {
+  const card = cards[currentIndex];
+  const mascotaId = card.dataset.id;
+
+  fetch(`/mascotas/reaccionar/${mascotaId}/`, {
+    method: "POST",
+    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+    body: new URLSearchParams({ accion })
+  });
+
+  showNextCard();
+}
+
+// --- Swipe con mouse/touch ---
+let startX = 0;
+let isDragging = false;
+
+cards.forEach(card => {
+  card.addEventListener("mousedown", e => {
+    startX = e.clientX;
+    isDragging = true;
+    card.style.transition = "none";
+  });
+
+  card.addEventListener("mousemove", e => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - startX;
+    card.style.transform = `translateX(${deltaX}px) rotate(${deltaX / 20}deg)`;
+  });
+
+  card.addEventListener("mouseup", e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const deltaX = e.clientX - startX;
+
+    card.style.transition = "transform 0.4s ease";
+
+    if (deltaX > 150) { // like
+      card.style.transform = "translateX(400px) rotate(20deg)";
+      setTimeout(() => reaccionar("like"), 400);
+    } else if (deltaX < -150) { // descartar
+      card.style.transform = "translateX(-400px) rotate(-20deg)";
+      setTimeout(() => reaccionar("descartar"), 400);
+    } else {
+      card.style.transform = "translateX(0) rotate(0)";
+    }
+  });
+
+  // soporte touch
+  card.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+    card.style.transition = "none";
+  });
+
+  card.addEventListener("touchmove", e => {
+    if (!isDragging) return;
+    const deltaX = e.touches[0].clientX - startX;
+    card.style.transform = `translateX(${deltaX}px) rotate(${deltaX / 20}deg)`;
+  });
+
+  card.addEventListener("touchend", e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const deltaX = e.changedTouches[0].clientX - startX;
+
+    card.style.transition = "transform 0.4s ease";
+
+    if (deltaX > 150) {
+      card.style.transform = "translateX(400px) rotate(20deg)";
+      setTimeout(() => reaccionar("like"), 400);
+    } else if (deltaX < -150) {
+      card.style.transform = "translateX(-400px) rotate(-20deg)";
+      setTimeout(() => reaccionar("descartar"), 400);
+    } else {
+      card.style.transform = "translateX(0) rotate(0)";
+    }
+  });
+});
+
+// --- Botones que fuerzan swipe ---
+document.getElementById("btn-like").addEventListener("click", () => {
+  const card = cards[currentIndex];
+  card.style.transition = "transform 0.4s ease";
+  card.style.transform = "translateX(400px) rotate(20deg)";
+  setTimeout(() => reaccionar("like"), 400);
+});
+
+document.getElementById("btn-descartar").addEventListener("click", () => {
+  const card = cards[currentIndex];
+  card.style.transition = "transform 0.4s ease";
+  card.style.transform = "translateX(-400px) rotate(-20deg)";
+  setTimeout(() => reaccionar("descartar"), 400);
+});
+</script>
+{% endblock %}

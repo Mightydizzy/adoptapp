@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Adoptapp{% endblock %}</title>
+
+  {% load bootstrap5 %}
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}
+
+  <style>
+    body {
+      background-color: #f5f5dc;
+    }
+    .navbar-custom {
+      background-color: #e68a2e;
+    }
+    .btn-custom {
+      background-color: #e68a2e;
+      border: none;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    .btn-custom:hover {
+      background-color: #cc6f10;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+      <a class="navbar-brand text-white fw-bold" href="{% url 'home' %}">Adoptapp 🐾</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'descubrir' %}">Encontrar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'publicar' %}">Publicar</a>
+          </li>
+
+
+          {% if user.is_authenticated %}
+            <!-- Dropdown del usuario -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle text-white" href="#" id="perfilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ user.username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
+                <li><a class="dropdown-item" href="{% url 'perfil' %}">Mi perfil</a></li>
+                <li><a class="dropdown-item" href="{% url 'editar_perfil' %}">Editar perfil</a></li>
+                <li><a class="dropdown-item" href="{% url 'cambiar_password' %}">Cambiar contraseña</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Salir</a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link text-white" href="{% url 'login' %}">Iniciar sesión</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="{% url 'signup' %}">Registrarse</a>
+            </li>
+          {% endif %}
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mt-4">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
+

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Segunda Oportunidad{% endblock %}
+{% block content %}
+<h2>🐾 Mascotas que descartaste</h2>
+<div class="row">
+  {% for reaccion in reacciones %}
+    <div class="col-md-4 mb-3">
+      <div class="card shadow">
+        <img src="{{ reaccion.mascota.foto.url }}" 
+            class="card-img-top" 
+            style="height: 250px; object-fit: cover;" 
+            alt="{{ reaccion.mascota.nombre }}">
+        <div class="card-body">
+          <h5>{{ reaccion.mascota.nombre }}</h5>
+          <p>{{ reaccion.mascota.especie }} · {{ reaccion.mascota.ciudad }}</p>
+          <form method="post" action="{% url 'reaccionar_mascota' reaccion.mascota.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="accion" value="like">
+            <button type="submit" class="btn btn-success">Dar Like</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>No tienes descartes todavía 🐕🐈.</p>
+  {% endfor %}
+</div>
+{% endblock %}
+
