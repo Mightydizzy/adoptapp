@@ -27,7 +27,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "adoptapp-n0yu.onrender.com", 
+    "adoptapp-7fq5.onrender.com", 
 ]
 
 # Application definition
