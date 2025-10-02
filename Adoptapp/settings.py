@@ -17,14 +17,12 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+SECRET_KEY = config("SECRET_KEY")
+DEBUG = config("DEBUG", default=False, cast=bool)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-whsl19)g*n&jhaqlaq$8$*vi5mo_vq&d6x12wgb&-zec6uo#uw'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -150,9 +148,9 @@ USE_TZ = True
 AUTH_USER_MODEL = "users.CustomUser"
 
 
-LOGIN_URL = "login"       # dónde está la vista de login
-LOGIN_REDIRECT_URL = "home"  # adónde redirige después de iniciar sesión
-LOGOUT_REDIRECT_URL = "login"  # adónde ir después de salir
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login" 
 
 
 
