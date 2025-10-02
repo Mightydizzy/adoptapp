@@ -29,7 +29,7 @@ class MascotaForm(forms.ModelForm):
 
     class Meta:
         model = Mascota
-        fields = ["nombre", "especie", "tamaño", "ciudad", "foto", "descripcion"]
+        fields = ["nombre", "especie", "tamaño", "sexo", "ciudad", "foto", "descripcion"]
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "especie": forms.Select(attrs={"class": "form-select"}),
