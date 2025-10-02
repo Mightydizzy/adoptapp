@@ -29,7 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "https://adoptapp-n0yu.onrender.com", 
+    "adoptapp-n0yu.onrender.com", 
 ]
 
 # Application definition
