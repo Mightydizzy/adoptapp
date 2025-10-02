@@ -23,6 +23,7 @@ class Mascota(models.Model):
     especie = models.CharField(max_length=20, choices=SPECIES)
     edad_meses = models.PositiveIntegerField(default=0)
     tamaño = models.CharField(max_length=20, choices=SIZES)
+    sexo = models.CharField(max_length=1, choices=SEXO_CHOICES, default="M")
     ciudad = models.CharField(max_length=50)
     foto = CloudinaryField("Foto de la mascota")
     descripcion = models.TextField(blank=True)
