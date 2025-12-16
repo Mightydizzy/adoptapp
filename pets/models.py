@@ -27,6 +27,8 @@ class Mascota(models.Model):
     ciudad = models.CharField(max_length=50)
     foto = CloudinaryField("Foto de la mascota")
     descripcion = models.TextField(blank=True)
+    disponible = models.BooleanField(default=True)
+
 
 
     def edad_legible(self):

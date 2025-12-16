@@ -15,7 +15,7 @@
               <h5 class="card-title mb-1 text-center">{{ m.nombre }}</h5>
                 <p class="text-center mb-2">
                 {{ m.especie|title }} ·
-                {% if m.sexo == "hembra" %}♀{% elif m.sexo == "macho" %}♂{% else %}⚥{% endif %}
+                {% if m.sexo == "Hembra" %}♀{% elif m.sexo == "Macho" %}♂{% else %}{% endif %}
                 {{ m.sexo|title }} ·
                 {{ m.edad_legible }} ·
                 {{ m.ciudad }}
