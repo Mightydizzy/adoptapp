@@ -12,11 +12,27 @@
           <div class="card h-100">
             <img src="{{ m.foto.url }}" class="card-img-top" alt="{{ m.nombre }}" style="height:220px; object-fit:cover;">
             <div class="card-body">
-              <h5 class="card-title">{{ m.nombre }}</h5>
-              <p class="card-text text-muted mb-2">
-                {{ m.especie|title }} · {{ m.tamano }} · {{ m.edad_legible }}<br>
+              <h5 class="card-title mb-1 text-center">{{ m.nombre }}</h5>
+                <p class="text-center mb-2">
+                {{ m.especie|title }} ·
+                {% if m.sexo == "hembra" %}♀{% elif m.sexo == "macho" %}♂{% else %}⚥{% endif %}
+                {{ m.sexo|title }} ·
+                {{ m.edad_legible }} ·
                 {{ m.ciudad }}
-              </p>
+                </p>
+
+                <p class="text-center mb-2">
+                {{ m.tamano|title }} · {{ m.descripcion }}
+                </p>
+
+                <div class="text-center mb-3">
+                {% if m.disponible %}
+                    <span class="badge bg-success">Disponible</span>
+                {% else %}
+                    <span class="badge bg-secondary">No disponible</span>
+                {% endif %}
+                </div>
+
 
               <a href="{% url 'chats_por_mascota' m.id %}" class="btn btn-outline-primary btn-sm">
                 Ver chats

@@ -55,3 +55,4 @@ def chats_por_mascota(request, mascota_id):
     return render(request, "chats/chats_por_mascota.html", {
         "chats": chats
     })
+
