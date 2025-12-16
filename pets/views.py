@@ -40,13 +40,22 @@ def reaccionar_mascota(request, mascota_id):
             defaults={"accion": accion}
         )
 
-        # Si la petición viene de un form HTML, redirige
+        if accion == "like":
+            from chats.models import Conversation
+            Conversation.objects.get_or_create(
+                mascota=mascota,
+                adoptante=request.user,
+                defaults={"publicador": mascota.publicador}
+            )
+
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse({"success": True, "accion": accion})
         else:
             return redirect("segunda_oportunidad")
 
     return JsonResponse({"success": False}, status=400)
+
+
 @login_required
 def segunda_oportunidad(request):
     reacciones = Reaccion.objects.filter(usuario=request.user, accion="descartar").select_related("mascota")

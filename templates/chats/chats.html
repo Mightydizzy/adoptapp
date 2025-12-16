@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Chats | Adoptapp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <h1 class="mb-4">Chats</h1>
+
+  <ul class="nav nav-tabs mb-3" id="chatTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active"
+              id="adoptar-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#adoptar"
+              type="button"
+              role="tab">
+        Quiero adoptar
+      </button>
+    </li>
+
+    <li class="nav-item" role="presentation">
+      <button class="nav-link"
+              id="interesados-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#interesados"
+              type="button"
+              role="tab">
+        Interesados en mis mascotas
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <div class="tab-pane fade show active" id="adoptar" role="tabpanel">
+      {% include "chats/_chat_list.html" with conversaciones=quiero_adoptar tipo="adoptante" %}
+    </div>
+
+    <div class="tab-pane fade" id="interesados" role="tabpanel">
+      {% include "chats/_chat_list.html" with conversaciones=interesados tipo="publicador" %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

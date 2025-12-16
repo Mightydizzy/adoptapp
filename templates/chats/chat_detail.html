@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Chat | Adoptapp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Banner contextual -->
+  <div class="card mb-3">
+    <div class="card-body d-flex gap-3 align-items-center">
+      <img src="{{ chat.mascota.foto.url }}"
+           alt="{{ chat.mascota.nombre }}"
+           class="rounded"
+           style="width: 72px; height: 72px; object-fit: cover;">
+
+      <div class="flex-grow-1">
+        <h5 class="mb-1">{{ chat.mascota.nombre }}</h5>
+
+        {% if user == chat.adoptante %}
+          <div class="text-muted">
+            Estás interesado en esta mascota (publicada por <strong>{{ chat.publicador.username }}</strong>)
+          </div>
+        {% else %}
+          <div class="text-muted">
+            <strong>{{ chat.adoptante.username }}</strong> está interesado en tu mascota publicada
+          </div>
+        {% endif %}
+
+        <div class="small text-muted">
+          Ciudad: {{ chat.mascota.ciudad }} · Edad: {{ chat.mascota.edad_legible }} · Tamaño: {{ chat.mascota.tamano }}
+        </div>
+      </div>
+
+      <a class="btn btn-outline-secondary btn-sm" href="{% url 'chat_list' %}">
+        Volver
+      </a>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div class="card">
+    <div class="card-body" style="max-height: 60vh; overflow-y: auto;">
+      {% if mensajes %}
+        {% for m in mensajes %}
+          <div class="d-flex mb-2 {% if m.sender_id == user.id %}justify-content-end{% else %}justify-content-start{% endif %}">
+            <div class="p-2 rounded border {% if m.sender_id == user.id %}bg-light{% endif %}" style="max-width: 75%;">
+              <div class="small text-muted mb-1">
+                {% if m.sender_id == user.id %}Tú{% else %}{{ m.sender.username }}{% endif %}
+                · {{ m.created_at|date:"d M H:i" }}
+              </div>
+              <div>{{ m.text|linebreaksbr }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-muted text-center py-4">
+          Aún no hay mensajes. Puedes iniciar la conversación.
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Enviar mensaje -->
+    <div class="card-footer">
+      <form method="post" class="d-flex gap-2">
+        {% csrf_token %}
+        <input type="text"
+               name="text"
+               class="form-control"
+               placeholder="Escribe un mensaje…"
+               maxlength="1000"
+               required>
+        <button class="btn btn-primary" type="submit">Enviar</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

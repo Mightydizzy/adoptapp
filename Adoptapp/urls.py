@@ -9,7 +9,7 @@ urlpatterns = [
     path("", include("users.urls")),
     path("mascotas/", include("pets.urls")),
     path("", views.descubrir_mascotas, name="home"),
-    
+    path("chats/", include("chats.urls")),    
 ]
 
 if settings.DEBUG:

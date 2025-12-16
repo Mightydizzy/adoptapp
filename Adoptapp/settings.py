@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'cloudinary_storage',
     'pets',
+    'chats',
 ]
 
 cloudinary.config( 

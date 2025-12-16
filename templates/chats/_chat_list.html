@@ -1,0 +1,11 @@
+{% if conversaciones %}
+  <div class="list-group">
+    {% for chat in conversaciones %}
+      {% include "chats/_chat_item.html" with chat=chat tipo=tipo %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-light border text-center">
+    No hay conversaciones en esta sección aún.
+  </div>
+{% endif %}
