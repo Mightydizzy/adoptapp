@@ -7,4 +7,6 @@ urlpatterns = [
     path("reaccionar/<int:mascota_id>/", views.reaccionar_mascota, name="reaccionar_mascota"),
     path("segunda-oportunidad/", views.segunda_oportunidad, name="segunda_oportunidad"),
     path("", views.descubrir_mascotas, name="home"),
+    path("mis-mascotas/", views.mis_mascotas, name="mis_mascotas"),
+
 ]

@@ -38,6 +38,16 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link text-white" href="{% url 'chat_list' %}">Chats</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="{% url 'mis_mascotas' %}">Mis mascotas</a>
+            </li>
+          {% endif %}
+
+
           <li class="nav-item">
             <a class="nav-link text-white" href="{% url 'descubrir' %}">Encontrar</a>
           </li>

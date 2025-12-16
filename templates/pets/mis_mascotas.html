@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Mis mascotas | Adoptapp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Mis mascotas publicadas</h1>
+
+  {% if mascotas %}
+    <div class="row g-3">
+      {% for m in mascotas %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100">
+            <img src="{{ m.foto.url }}" class="card-img-top" alt="{{ m.nombre }}" style="height:220px; object-fit:cover;">
+            <div class="card-body">
+              <h5 class="card-title">{{ m.nombre }}</h5>
+              <p class="card-text text-muted mb-2">
+                {{ m.especie|title }} · {{ m.tamano }} · {{ m.edad_legible }}<br>
+                {{ m.ciudad }}
+              </p>
+
+              <a href="{% url 'chats_por_mascota' m.id %}" class="btn btn-outline-primary btn-sm">
+                Ver chats
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-light border text-center">
+      Aún no has publicado mascotas.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

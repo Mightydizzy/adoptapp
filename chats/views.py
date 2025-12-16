@@ -44,3 +44,14 @@ def chat_detail(request, chat_id):
         "chat": chat,
         "mensajes": mensajes,
     })
+
+@login_required
+def chats_por_mascota(request, mascota_id):
+    chats = Conversation.objects.filter(
+        mascota_id=mascota_id,
+        publicador=request.user
+    ).select_related("adoptante", "mascota")
+
+    return render(request, "chats/chats_por_mascota.html", {
+        "chats": chats
+    })

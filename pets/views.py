@@ -60,3 +60,8 @@ def reaccionar_mascota(request, mascota_id):
 def segunda_oportunidad(request):
     reacciones = Reaccion.objects.filter(usuario=request.user, accion="descartar").select_related("mascota")
     return render(request, "pets/segunda_oportunidad.html", {"reacciones": reacciones})
+
+@login_required
+def mis_mascotas(request):
+    mascotas = Mascota.objects.filter(publicador=request.user).order_by("-id")
+    return render(request, "pets/mis_mascotas.html", {"mascotas": mascotas})
