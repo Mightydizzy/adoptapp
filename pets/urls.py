@@ -11,5 +11,6 @@ urlpatterns = [
     path("estado/<int:mascota_id>/", views.cambiar_estado_mascota, name="cambiar_estado_mascota"),
     path("notificaciones/", views.notificaciones, name="notificaciones"),
     path("notificaciones/abrir/<int:notif_id>/", views.abrir_notificacion_like, name="abrir_notificacion_like"),
-    
+    path("api/regiones/", views.api_regiones, name="api_regiones"),
+    path("api/regiones/<str:region_id>/comunas/", views.api_comunas, name="api_comunas"),
 ]

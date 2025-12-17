@@ -5,6 +5,7 @@
 <div class="row justify-content-center">
   <div class="col-md-6">
     <h2 class="mb-4">Publicar Mascota</h2>
+
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
@@ -36,7 +37,7 @@
         <label for="{{ form.tamaño.id_for_label }}" class="form-label">Tamaño</label>
         {{ form.tamaño }}
         {% if form.tamaño.errors %}
-          <div class="text-danger">{{ form.tamaño.errors|join:", " }}</div>
+          <div class="text-danger">{{ form.tamaño.errors|join:", " }}</divasl %>
         {% endif %}
       </div>
 
@@ -57,12 +58,23 @@
         </div>
       </div>
 
+      <!-- Región / Comuna (DPA) -->
       <div class="mb-3">
-        <label for="{{ form.ciudad.id_for_label }}" class="form-label">Ciudad</label>
+        <label class="form-label">Región</label>
+        <select id="regionSelect" class="form-select" required>
+          <option value="">Selecciona región</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Comuna</label>
+        <select id="comunaSelect" class="form-select" required disabled>
+          <option value="">Selecciona comuna</option>
+        </select>
+      </div>
+
+      <div style="display:none;">
         {{ form.ciudad }}
-        {% if form.ciudad.errors %}
-          <div class="text-danger">{{ form.ciudad.errors|join:", " }}</div>
-        {% endif %}
       </div>
 
       <div class="mb-3">
@@ -95,4 +107,62 @@
     </form>
   </div>
 </div>
+
+<script>
+(function () {
+  const regionSel = document.getElementById("regionSelect");
+  const comunaSel = document.getElementById("comunaSelect");
+  const ciudadHidden = document.getElementById("id_ciudad"); // el input oculto del form
+
+  if (!regionSel || !comunaSel) {
+    console.error("No se encontraron regionSelect/comunaSelect en el DOM.");
+    return;
+  }
+
+  async function loadRegiones() {
+    const res = await fetch("/mascotas/api/regiones/");
+    if (!res.ok) throw new Error("No se pudieron cargar regiones");
+    const regs = await res.json();
+
+    regionSel.innerHTML =
+      `<option value="">Selecciona región</option>` +
+      regs.map(r => `<option value="${r.id}">${r.nombre}</option>`).join("");
+  }
+
+  async function loadComunas(regionId) {
+    comunaSel.disabled = true;
+    comunaSel.innerHTML = `<option value="">Cargando comunas...</option>`;
+
+    const res = await fetch(`/mascotas/api/regiones/${regionId}/comunas/`);
+    if (!res.ok) {
+      comunaSel.innerHTML = `<option value="">No se pudieron cargar</option>`;
+      return;
+    }
+
+    const cs = await res.json();
+    comunaSel.innerHTML =
+      `<option value="">Selecciona comuna</option>` +
+      cs.map(c => `<option value="${c.nombre}">${c.nombre}</option>`).join("");
+
+    comunaSel.disabled = false;
+  }
+
+  regionSel.addEventListener("change", async (e) => {
+    const id = e.target.value;
+
+    comunaSel.innerHTML = `<option value="">Selecciona comuna</option>`;
+    comunaSel.disabled = true;
+
+    if (id) await loadComunas(id);
+  });
+
+  comunaSel.addEventListener("change", (e) => {
+    if (ciudadHidden) ciudadHidden.value = e.target.value; // guarda comuna como ciudad
+  });
+
+  // init
+  loadRegiones().catch(err => console.error(err));
+})();
+</script>
+
 {% endblock %}

@@ -2,9 +2,6 @@
 {% block title %}Editar mascota | Adoptapp{% endblock %}
 
 {% block content %}
-<!-- DEBUG: SI VES ESTE TEXTO, ESTE TEMPLATE ES EL QUE SE ESTÁ USANDO -->
-<div style="display:none;">TEMPLATE_OK_EDITAR_MASCOTA</div>
-
 <div class="container mt-4" style="max-width: 900px;">
   <h1 class="mb-3">Editar mascota</h1>
 
@@ -26,8 +23,6 @@
           <small class="text-muted d-block mb-2">
             Si subes una nueva imagen, reemplazará la actual.
           </small>
-
-          <!-- IMPORTANTE: input manual para que NO salga "Actualmente:" -->
           <input type="file" name="foto" class="form-control" form="editForm" accept="image/*">
         </div>
       </div>
@@ -35,14 +30,37 @@
       <form id="editForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <!-- Campos: todo abajo a la izquierda -->
+        <!-- Aviso de campos no editables futuro -->
+        <div class="alert alert-warning py-2">
+          Por ahora puedes modificar todo, pero en el futuro solo se podrá editar: <strong>Nombre, Ciudad/Comuna, Descripción y Foto</strong>.
+        </div>
+
         <div class="row g-3 mb-2">
           <div class="col-md-6">
             <label class="form-label d-block">Nombre</label>
             {{ form.nombre }}
           </div>
+
+          <!-- Región / Comuna -->
           <div class="col-md-6">
-            <label class="form-label d-block">Ciudad</label>
+            <label class="form-label d-block">Región</label>
+            <select id="regionSelect" class="form-select">
+              <option value="">Selecciona región</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label d-block">Comuna</label>
+            <select id="comunaSelect" class="form-select" disabled>
+              <option value="">Selecciona comuna</option>
+            </select>
+            <div class="form-text">
+              Ciudad actual: <strong>{{ mascota.ciudad }}</strong>
+            </div>
+          </div>
+
+          <!-- Campo ciudad original del form: oculto -->
+          <div style="display:none;">
             {{ form.ciudad }}
           </div>
 
@@ -64,7 +82,7 @@
             {{ form.edad_meses }}
           </div>
 
-          <!-- Descripción AL FINAL, label arriba, ancho completo -->
+          <!-- Descripción al final -->
           <div class="col-12 mt-2">
             <label class="form-label d-block">Descripción</label>
             <div class="w-100">
@@ -84,7 +102,64 @@
 </div>
 
 <style>
-  /* Fuerza el textarea a comportarse como bloque y ancho completo */
   #id_descripcion { display:block; width:100%; box-sizing:border-box; }
 </style>
+
+<script>
+(function () {
+  const regionSel = document.getElementById("regionSelect");
+  const comunaSel = document.getElementById("comunaSelect");
+  const ciudadHidden = document.getElementById("id_ciudad"); // el input oculto del form
+
+  if (!regionSel || !comunaSel) {
+    console.error("No se encontraron regionSelect/comunaSelect en el DOM.");
+    return;
+  }
+
+  async function loadRegiones() {
+    const res = await fetch("/mascotas/api/regiones/");
+    if (!res.ok) throw new Error("No se pudieron cargar regiones");
+    const regs = await res.json();
+
+    regionSel.innerHTML =
+      `<option value="">Selecciona región</option>` +
+      regs.map(r => `<option value="${r.id}">${r.nombre}</option>`).join("");
+  }
+
+  async function loadComunas(regionId) {
+    comunaSel.disabled = true;
+    comunaSel.innerHTML = `<option value="">Cargando comunas...</option>`;
+
+    const res = await fetch(`/mascotas/api/regiones/${regionId}/comunas/`);
+    if (!res.ok) {
+      comunaSel.innerHTML = `<option value="">No se pudieron cargar</option>`;
+      return;
+    }
+
+    const cs = await res.json();
+    comunaSel.innerHTML =
+      `<option value="">Selecciona comuna</option>` +
+      cs.map(c => `<option value="${c.nombre}">${c.nombre}</option>`).join("");
+
+    comunaSel.disabled = false;
+  }
+
+  regionSel.addEventListener("change", async (e) => {
+    const id = e.target.value;
+
+    comunaSel.innerHTML = `<option value="">Selecciona comuna</option>`;
+    comunaSel.disabled = true;
+
+    if (id) await loadComunas(id);
+  });
+
+  comunaSel.addEventListener("change", (e) => {
+    if (ciudadHidden) ciudadHidden.value = e.target.value; // guarda comuna como ciudad
+  });
+
+  // init
+  loadRegiones().catch(err => console.error(err));
+})();
+</script>
+
 {% endblock %}

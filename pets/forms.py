@@ -2,7 +2,6 @@ from django import forms
 from .models import Mascota
 
 class MascotaForm(forms.ModelForm):
-    # Campos de edad separados (años + meses)
     edad_anios = forms.IntegerField(
         min_value=0,
         required=False,
@@ -46,7 +45,6 @@ class MascotaForm(forms.ModelForm):
 
     def save(self, commit=True, publicador=None):
         mascota = super().save(commit=False)
-        # Convertir años y meses a meses totales
         anios = self.cleaned_data.get("edad_anios") or 0
         meses = self.cleaned_data.get("edad_meses_extra") or 0
         mascota.edad_meses = anios * 12 + meses
@@ -58,7 +56,7 @@ class MascotaForm(forms.ModelForm):
         return mascota
     
 
-class MascotaForm(forms.ModelForm):
+class MascotaEditForm(forms.ModelForm):
     class Meta:
         model = Mascota
-        exclude = ["publicador", "disponible"]  # importante
+        exclude = ["publicador", "disponible"]

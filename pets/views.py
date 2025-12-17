@@ -6,6 +6,8 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from chats.models import Conversation
+from .services.dpa_local import load_data
+
 
 @login_required
 def publicar_mascota(request):
@@ -146,3 +148,19 @@ def abrir_notificacion_like(request, notif_id):
     )
 
     return redirect("chat_detalle", convo.id)
+
+
+
+@login_required
+def api_regiones(request):
+    data = load_data()
+    payload = [{"id": r["id"], "nombre": r["region"]} for r in data["regiones"]]
+    return JsonResponse(payload, safe=False)
+
+@login_required
+def api_comunas(request, region_id):
+    data = load_data()
+    region = next((r for r in data["regiones"] if r["id"] == region_id), None)
+    if not region:
+        return JsonResponse({"error": "Región no encontrada"}, status=404)
+    return JsonResponse([{"nombre": c} for c in region["comunas"]], safe=False)
