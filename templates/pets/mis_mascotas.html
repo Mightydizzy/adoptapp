@@ -11,32 +11,96 @@
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <img src="{{ m.foto.url }}" class="card-img-top" alt="{{ m.nombre }}" style="height:220px; object-fit:cover;">
+
             <div class="card-body">
               <h5 class="card-title mb-1 text-center">{{ m.nombre }}</h5>
-                <p class="text-center mb-2">
-                {{ m.especie|title }} ·
-                {% if m.sexo == "Hembra" %}♀{% elif m.sexo == "Macho" %}♂{% else %}{% endif %}
-                {{ m.sexo|title }} ·
-                {{ m.edad_legible }} ·
-                {{ m.ciudad }}
-                </p>
 
-                <p class="text-center mb-2">
-                {{ m.tamano|title }} · {{ m.descripcion }}
-                </p>
-
-                <div class="text-center mb-3">
-                {% if m.disponible %}
-                    <span class="badge bg-success">Disponible</span>
+              <p class="text-center mb-2">
+                {{ m.especie|capfirst }} ·
+                {% if m.sexo == "M" %}
+                  ♂ Macho
+                {% elif m.sexo == "H" %}
+                  ♀ Hembra
                 {% else %}
-                    <span class="badge bg-secondary">No disponible</span>
+                  Sexo desconocido
                 {% endif %}
+                · {{ m.edad_legible }} · {{ m.ciudad }} ·
+                {{ m.tamaño|capfirst }}
+                {% if m.descripcion %}
+                  · {{ m.descripcion }}
+                {% endif %}
+              </p>
+
+              <div class="text-center mb-3">
+                {% if m.disponible %}
+                  <span class="badge bg-success">Disponible</span>
+                {% else %}
+                  <span class="badge bg-secondary">No disponible</span>
+                {% endif %}
+              </div>
+
+              <div class="d-flex flex-wrap gap-2 justify-content-start">
+                <a href="{% url 'chats_por_mascota' m.id %}" class="btn btn-outline-primary btn-sm">
+                  Ver chats
+                </a>
+
+                <a href="{% url 'editar_mascota' m.id %}" class="btn btn-outline-secondary btn-sm">
+                  Editar
+                </a>
+
+                {% if m.disponible %}
+                  <button class="btn btn-outline-danger btn-sm"
+                          data-bs-toggle="modal" data-bs-target="#estadoModal{{ m.id }}">
+                    Marcar No disponible
+                  </button>
+                {% else %}
+                  <button class="btn btn-outline-success btn-sm"
+                          data-bs-toggle="modal" data-bs-target="#estadoModal{{ m.id }}">
+                    Volver Disponible
+                  </button>
+                {% endif %}
+              </div>
+
+              <!-- ✅ Modal de confirmación (1 por mascota) -->
+              <div class="modal fade" id="estadoModal{{ m.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form method="post" action="{% url 'cambiar_estado_mascota' m.id %}">
+                      {% csrf_token %}
+
+                      {% if m.disponible %}
+                        <input type="hidden" name="disponible" value="0">
+                      {% else %}
+                        <input type="hidden" name="disponible" value="1">
+                      {% endif %}
+
+                      <div class="modal-header">
+                        <h5 class="modal-title">Confirmar cambio de estado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+
+                      <div class="modal-body">
+                        <p class="mb-2">
+                          {% if m.disponible %}
+                            Vas a marcar <strong>{{ m.nombre }}</strong> como <strong>No disponible</strong>.
+                          {% else %}
+                            Vas a volver a marcar <strong>{{ m.nombre }}</strong> como <strong>Disponible</strong>.
+                          {% endif %}
+                        </p>
+
+                        <label class="form-label">Confirma tu contraseña</label>
+                        <input type="password" name="password" class="form-control" required>
+                      </div>
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-
-
-              <a href="{% url 'chats_por_mascota' m.id %}" class="btn btn-outline-primary btn-sm">
-                Ver chats
-              </a>
+              </div>
+              <!-- /Modal -->
             </div>
           </div>
         </div>

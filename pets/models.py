@@ -60,3 +60,22 @@ class Reaccion(models.Model):
 
     class Meta:
         unique_together = ("usuario", "mascota")  # un usuario no puede reaccionar 2 veces a la misma mascota
+
+
+User = settings.AUTH_USER_MODEL
+
+class Notificacion(models.Model):
+    TIPO_CHOICES = [
+        ("like", "Like"),
+    ]
+
+    destinatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones_recibidas")
+    actor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones_emitidas")
+    mascota = models.ForeignKey("Mascota", on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    mensaje = models.CharField(max_length=255)
+    leida = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} -> {self.destinatario}"

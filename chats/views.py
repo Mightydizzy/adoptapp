@@ -18,32 +18,84 @@ def chat_list(request):
     })
 
 
-@login_required
-def chat_detail(request, chat_id):
-    chat = get_object_or_404(
-        Conversation,
-        id=chat_id,
-        chat = get_object_or_404(
-            Conversation.objects.filter(Q(adoptante=request.user) | Q(publicador=request.user)),
-            id=chat_id)
-        )
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Q
 
-    mensajes = chat.mensajes.select_related("sender").order_by("created_at")
+from .models import Conversation, Message
+from pets.models import Mascota
+
+
+@login_required
+def mis_chats(request):
+    # Conversaciones donde soy adoptante o publicador
+    convs = (Conversation.objects
+             .filter(Q(adoptante=request.user) | Q(publicador=request.user))
+             .select_related("mascota", "adoptante", "publicador")
+             .order_by("-created_at"))
+
+    # Separación UX:
+    # - "Me interesan": yo soy adoptante
+    # - "Interesados": yo soy publicador
+    me_interesan = [c for c in convs if c.adoptante_id == request.user.id]
+    interesados = [c for c in convs if c.publicador_id == request.user.id]
+
+    return render(request, "chats/mis_chats.html", {
+        "me_interesan": me_interesan,
+        "interesados": interesados,
+    })
+
+
+@login_required
+def chats_por_mascota(request, mascota_id):
+    mascota = get_object_or_404(Mascota, id=mascota_id)
+
+    # Solo el publicador puede ver los chats de ESA mascota
+    if mascota.publicador_id != request.user.id:
+        return redirect("mis_chats")
+
+    convs = (Conversation.objects
+             .filter(mascota=mascota)
+             .select_related("adoptante", "publicador", "mascota")
+             .order_by("-created_at"))
+
+    return render(request, "chats/chats_por_mascota.html", {
+        "mascota": mascota,
+        "convs": convs,
+    })
+
+
+@login_required
+def chat_detalle(request, conversation_id):
+    convo = get_object_or_404(
+        Conversation.objects.select_related("mascota", "adoptante", "publicador"),
+        id=conversation_id
+    )
+
+    if request.user.id not in (convo.adoptante_id, convo.publicador_id):
+        return redirect("mis_chats")
+
+    Message.objects.filter(conversation=convo).exclude(sender=request.user).update(is_read=True)
 
     if request.method == "POST":
-        text = request.POST.get("text", "").strip()
-        if text:
-            Message.objects.create(
-                conversation=chat,
-                sender=request.user,
-                text=text
-            )
-        return redirect("chat_detail", chat_id=chat.id)
+        texto = (request.POST.get("text") or "").strip()
+        if texto:
+            Message.objects.create(conversation=convo, sender=request.user, text=texto)
+        return redirect("chat_detalle", conversation_id=convo.id)
 
-    return render(request, "chats/chat_detail.html", {
-        "chat": chat,
+    mensajes = (Message.objects
+                .filter(conversation=convo)
+                .select_related("sender")
+                .order_by("created_at"))
+
+    # Para el encabezado tipo "X está interesado en Y"
+    interesado = convo.adoptante  # el que dio like / adoptante
+    return render(request, "chats/chat_detalle.html", {
+        "convo": convo,
         "mensajes": mensajes,
+        "interesado": interesado,
     })
+
 
 @login_required
 def chats_por_mascota(request, mascota_id):

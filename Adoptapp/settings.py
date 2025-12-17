@@ -76,6 +76,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'Adoptapp.urls'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -90,6 +91,10 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+    "pets.context_processors.notificaciones_dropdown",
 ]
 
 WSGI_APPLICATION = 'Adoptapp.wsgi.application'

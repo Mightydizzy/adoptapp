@@ -32,12 +32,16 @@ class MascotaForm(forms.ModelForm):
         fields = ["nombre", "especie", "tamaño", "sexo", "ciudad", "foto", "descripcion"]
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
-            "especie": forms.Select(attrs={"class": "form-select"}),
-            "tamaño": forms.Select(attrs={"class": "form-select"}),
-            "sexo": forms.Select(attrs={"class": "form-select"}, choices=Mascota.SEXO_CHOICES),
             "ciudad": forms.TextInput(attrs={"class": "form-control"}),
+
+            "especie": forms.Select(attrs={"class": "form-select"}),
+            "sexo": forms.Select(attrs={"class": "form-select"}),
+            "tamaño": forms.Select(attrs={"class": "form-select"}),
+
+            "edad_meses": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
             "foto": forms.ClearableFileInput(attrs={"class": "form-control"}),
-            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+
+            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 6}),
         }
 
     def save(self, commit=True, publicador=None):
@@ -52,3 +56,9 @@ class MascotaForm(forms.ModelForm):
         if commit:
             mascota.save()
         return mascota
+    
+
+class MascotaForm(forms.ModelForm):
+    class Meta:
+        model = Mascota
+        exclude = ["publicador", "disponible"]  # importante

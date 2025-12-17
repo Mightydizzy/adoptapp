@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Editar mascota | Adoptapp{% endblock %}
+
+{% block content %}
+<!-- DEBUG: SI VES ESTE TEXTO, ESTE TEMPLATE ES EL QUE SE ESTÁ USANDO -->
+<div style="display:none;">TEMPLATE_OK_EDITAR_MASCOTA</div>
+
+<div class="container mt-4" style="max-width: 900px;">
+  <h1 class="mb-3">Editar mascota</h1>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <!-- Foto actual -->
+      <div class="mb-3">
+        <div class="fw-semibold">Foto actual</div>
+        {% if mascota.foto %}
+          <img src="{{ mascota.foto.url }}" class="img-fluid rounded border mt-2"
+               style="width:100%; max-height:380px; object-fit:cover;" alt="{{ mascota.nombre }}">
+        {% endif %}
+      </div>
+
+      <!-- Reemplazar foto: debajo, alineado a la derecha -->
+      <div class="d-flex justify-content-end mb-4">
+        <div style="max-width: 360px; width: 100%;">
+          <small class="text-muted d-block mb-2">
+            Si subes una nueva imagen, reemplazará la actual.
+          </small>
+
+          <!-- IMPORTANTE: input manual para que NO salga "Actualmente:" -->
+          <input type="file" name="foto" class="form-control" form="editForm" accept="image/*">
+        </div>
+      </div>
+
+      <form id="editForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Campos: todo abajo a la izquierda -->
+        <div class="row g-3 mb-2">
+          <div class="col-md-6">
+            <label class="form-label d-block">Nombre</label>
+            {{ form.nombre }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label d-block">Ciudad</label>
+            {{ form.ciudad }}
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label d-block">Especie</label>
+            {{ form.especie }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label d-block">Sexo</label>
+            {{ form.sexo }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label d-block">Tamaño</label>
+            {{ form.tamaño }}
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label d-block">Edad (meses)</label>
+            {{ form.edad_meses }}
+          </div>
+
+          <!-- Descripción AL FINAL, label arriba, ancho completo -->
+          <div class="col-12 mt-2">
+            <label class="form-label d-block">Descripción</label>
+            <div class="w-100">
+              {{ form.descripcion }}
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+          <a href="{% url 'mis_mascotas' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Fuerza el textarea a comportarse como bloque y ancho completo */
+  #id_descripcion { display:block; width:100%; box-sizing:border-box; }
+</style>
+{% endblock %}
