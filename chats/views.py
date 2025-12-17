@@ -66,10 +66,10 @@ def chats_por_mascota(request, mascota_id):
 
 
 @login_required
-def chat_detalle(request, conversation_id):
+def chat_detalle(request, chat_id):
     convo = get_object_or_404(
         Conversation.objects.select_related("mascota", "adoptante", "publicador"),
-        id=conversation_id
+        id=chat_id
     )
 
     if request.user.id not in (convo.adoptante_id, convo.publicador_id):
@@ -78,10 +78,11 @@ def chat_detalle(request, conversation_id):
     Message.objects.filter(conversation=convo).exclude(sender=request.user).update(is_read=True)
 
     if request.method == "POST":
-        texto = (request.POST.get("text") or "").strip()
-        if texto:
-            Message.objects.create(conversation=convo, sender=request.user, text=texto)
-        return redirect("chat_detalle", conversation_id=convo.id)
+        text = (request.POST.get("text") or "").strip()
+        if text:
+            Message.objects.create(conversation=convo, sender=request.user, text=text)
+        return redirect(request.path)
+
 
     mensajes = (Message.objects
                 .filter(conversation=convo)

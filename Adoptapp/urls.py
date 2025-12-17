@@ -7,7 +7,7 @@ from django.conf import settings
 
 urlpatterns = [
     path("", views.descubrir_mascotas, name="home"),
-    path("", include("users.urls")),
+    path("users/", include("users.urls")),
     path("mascotas/", include("pets.urls")),
     path("chats/", include("chats.urls")),    
 ]

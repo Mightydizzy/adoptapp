@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Chat | Adoptapp{% endblock %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 900px;">
+  <a href="{% url 'chat_list' %}" class="btn btn-outline-secondary btn-sm mb-3">← Volver</a>
+
+  <div class="alert alert-info">
+    <strong>{{ interesado.username }}</strong> está interesado en <strong>{{ convo.mascota.nombre }}</strong>.
+  </div>
+
+  <div class="card">
+    <div class="card-body" style="height: 420px; overflow-y: auto; background: #fafafa;">
+      {% for m in mensajes %}
+        <div class="mb-2 {% if m.sender_id == user.id %}text-end{% endif %}">
+          <div class="d-inline-block p-2 rounded
+               {% if m.sender_id == user.id %}bg-primary text-white{% else %}bg-white border{% endif %}">
+            {{ m.text }}
+          </div>
+          <div class="small text-muted mt-1">
+            {{ m.sender.username }} · {{ m.created_at }}
+          </div>
+        </div>
+      {% empty %}
+        <div class="text-muted">Aún no hay mensajes.</div>
+      {% endfor %}
+    </div>
+
+    <div class="card-footer">
+      <form method="post" class="d-flex gap-2">
+        {% csrf_token %}
+        <input type="text" name="text" class="form-control" placeholder="Escribe un mensaje..." autocomplete="off">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
