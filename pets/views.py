@@ -25,12 +25,59 @@ def publicar_mascota(request):
 
 @login_required
 def descubrir_mascotas(request):
-    Mascota.objects.filter(disponible=True)
-    vistas = Reaccion.objects.filter(usuario=request.user).values_list("mascota_id", flat=True)
+    vistas = Reaccion.objects.filter(
+        usuario=request.user
+    ).values_list("mascota_id", flat=True)
 
-    mascotas = Mascota.objects.exclude(publicador=request.user).exclude(id__in=vistas).order_by("-fecha_publicacion")
+    mascotas = (
+        Mascota.objects
+        .filter(disponible=True)
+        .exclude(publicador=request.user)
+        .exclude(id__in=vistas)
+    )
 
-    return render(request, "pets/descubrir.html", {"mascotas": mascotas})
+    # ---------- FILTROS ----------
+    especie = request.GET.get("especie")
+    sexo = request.GET.get("sexo")
+    tamano = request.GET.get("tamano")
+    edad_min = request.GET.get("edad_min")
+    edad_max = request.GET.get("edad_max")
+
+    if especie:
+        mascotas = mascotas.filter(especie=especie)
+
+    if sexo:
+        mascotas = mascotas.filter(sexo=sexo)
+
+    if tamano:
+        mascotas = mascotas.filter(tamaño=tamano)
+
+    edad_min_anios = request.GET.get("edad_min") or ""
+    edad_max_anios = request.GET.get("edad_max") or ""
+
+    if edad_min_anios.isdigit():
+        mascotas = mascotas.filter(edad_meses__gte=int(edad_min_anios) * 12)
+
+    if edad_max_anios.isdigit():
+        mascotas = mascotas.filter(edad_meses__lt=(int(edad_max_anios) + 1) * 12)
+
+
+    mascotas = mascotas.order_by("-fecha_publicacion")
+
+    return render(request, "pets/descubrir.html", {
+        "mascotas": mascotas,
+        "filters": {
+            "especie": especie,
+            "sexo": sexo,
+            "tamano": tamano,
+            "edad_min": edad_min,
+            "edad_max": edad_max,
+        },
+        "ESPECIES": Mascota.SPECIES,
+        "SEXOS": Mascota.SEXO_CHOICES,
+        "SIZES": Mascota.SIZES,
+    })
+
 
 
 @login_required

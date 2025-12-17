@@ -2,39 +2,129 @@
 {% block title %}Descubrir Mascotas{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-center mt-4">
-  <div id="card-container" class="position-relative" style="width: 350px; height: 500px;">
-    {% for mascota in mascotas %}
-    <div class="card position-absolute w-100 h-100 shadow-lg rounded-4 mascota-card"
-         data-id="{{ mascota.id }}"
-         style="background: white; display: {% if forloop.first %}block{% else %}none{% endif %};">
-      <img src="{{ mascota.foto.url }}" class="card-img-top rounded-top-4" style="height: 60%; object-fit: cover;" alt="{{ mascota.nombre }}">
-      <div class="card-body text-center">
-        <h4>{{ mascota.nombre }}</h4>
-        <p>
-          {{ mascota.especie|capfirst }} · 
-          {% if mascota.sexo == "M" %}
-            ♂ Macho
-          {% elif mascota.sexo == "H" %}
-            ♀ Hembra
-          {% endif %} ·
-          {{ mascota.edad_legible }} · {{ mascota.ciudad }}
-          {{ mascota.tamaño|capfirst }} · {{ mascota.descripcion }}
-        </p>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-</div>
+<div class="container mt-4" style="max-width: 980px;">
 
-<div class="d-flex justify-content-center mt-3 gap-5">
-  <button class="btn btn-outline-danger btn-lg" id="btn-descartar">✖</button>
-  <button class="btn btn-outline-success btn-lg" id="btn-like">❤</button>
-</div>
-<div class="d-flex justify-content-center mt-4">
-  <a href="{% url 'segunda_oportunidad' %}" class="btn btn-outline-secondary">
-    🐾 Ver Segunda Oportunidad
-  </a>
+  <!-- FILTROS -->
+  <form method="get" class="card p-3 mb-4 shadow-sm rounded-4">
+    <div class="row g-2 align-items-end">
+
+      <div class="col-12 col-md-3">
+        <label class="form-label">Especie</label>
+        <select name="especie" class="form-select">
+          <option value="">Todas</option>
+          {% for val, label in ESPECIES %}
+            <option value="{{ val }}" {% if filters.especie == val %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label">Sexo</label>
+        <select name="sexo" class="form-select">
+          <option value="">Todos</option>
+          {% for val, label in SEXOS %}
+            <option value="{{ val }}" {% if filters.sexo == val %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label">Tamaño</label>
+        <select name="tamano" class="form-select">
+          <option value="">Todos</option>
+          {% for val, label in SIZES %}
+            <option value="{{ val }}" {% if filters.tamano == val %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-6 col-md-1">
+        <label class="form-label">Edad min (años)</label>
+        <input type="number" min="0" name="edad_min" class="form-control" value="{{ filters.edad_min }}">
+      </div>
+
+      <div class="col-6 col-md-1">
+        <label class="form-label">Edad max (años)</label>
+        <input type="number" min="0" name="edad_max" class="form-control" value="{{ filters.edad_max }}">
+      </div>
+
+      <div class="col-12 col-md-1 d-grid">
+        <button class="btn btn-primary">Filtrar</button>
+      </div>
+
+      <div class="col-12 col-md-1 d-grid">
+        <a href="{% url 'descubrir' %}" class="btn btn-outline-secondary">Limpiar</a>
+      </div>
+
+      <div class="col-12">
+        <div class="small text-muted mt-1">
+          El filtro de edad en años incluye meses (ej: 4 años = hasta 4 años 11 meses).
+        </div>
+      </div>
+
+    </div>
+  </form>
+
+  <!-- TARJETAS -->
+  <div class="d-flex justify-content-center">
+    <div id="card-container" class="position-relative" style="width: 350px; height: 500px;">
+      {% if mascotas %}
+        {% for mascota in mascotas %}
+        <div class="card position-absolute w-100 h-100 shadow-lg rounded-4 mascota-card"
+             data-id="{{ mascota.id }}"
+             style="background: white; display: {% if forloop.first %}block{% else %}none{% endif %};">
+          <img src="{{ mascota.foto.url }}"
+               class="card-img-top rounded-top-4"
+               style="height: 60%; object-fit: cover;"
+               alt="{{ mascota.nombre }}">
+
+          <div class="card-body text-center">
+            <h4 class="mb-2">{{ mascota.nombre }}</h4>
+
+            <p class="mb-0">
+              {{ mascota.get_especie_display }} ·
+              {% if mascota.sexo == "M" %}
+                ♂ Macho
+              {% elif mascota.sexo == "H" %}
+                ♀ Hembra
+              {% else %}
+                —
+              {% endif %}
+              · {{ mascota.edad_legible }} · {{ mascota.ciudad }}
+            </p>
+
+            <p class="mt-2 mb-0">
+              {{ mascota.get_tamaño_display }} · {{ mascota.descripcion }}
+            </p>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-center text-muted mt-4">
+          No hay mascotas disponibles con esos filtros.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- BOTONES -->
+  <div class="d-flex justify-content-center mt-3 gap-5">
+    <button class="btn btn-outline-danger btn-lg" id="btn-descartar" {% if not mascotas %}disabled{% endif %}>✖</button>
+    <button class="btn btn-outline-success btn-lg" id="btn-like" {% if not mascotas %}disabled{% endif %}>❤</button>
+  </div>
+
+  <div class="d-flex justify-content-center mt-4">
+    <a href="{% url 'segunda_oportunidad' %}" class="btn btn-outline-secondary">
+      🐾 Ver Segunda Oportunidad
+    </a>
+  </div>
+
 </div>
 
 
@@ -43,12 +133,20 @@ const cards = document.querySelectorAll(".mascota-card");
 let currentIndex = 0;
 
 function showNextCard() {
+  if (!cards.length) return;
+
   if (currentIndex < cards.length - 1) {
     cards[currentIndex].style.display = "none";
     currentIndex++;
     cards[currentIndex].style.display = "block";
   } else {
-    document.getElementById("card-container").innerHTML = "<p>No hay más mascotas disponibles</p>";
+    document.getElementById("card-container").innerHTML =
+      "<p class='text-center text-muted mt-4'>No hay más mascotas disponibles</p>";
+
+    const likeBtn = document.getElementById("btn-like");
+    const discBtn = document.getElementById("btn-descartar");
+    if (likeBtn) likeBtn.disabled = true;
+    if (discBtn) discBtn.disabled = true;
   }
 }
 
@@ -58,9 +156,13 @@ function reaccionar(accion) {
 
   fetch(`/mascotas/reaccionar/${mascotaId}/`, {
     method: "POST",
-    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+    headers: {
+      "X-CSRFToken": "{{ csrf_token }}",
+      "X-Requested-With": "XMLHttpRequest",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
     body: new URLSearchParams({ accion })
-  });
+  }).catch(() => {});
 
   showNextCard();
 }
@@ -89,10 +191,10 @@ cards.forEach(card => {
 
     card.style.transition = "transform 0.4s ease";
 
-    if (deltaX > 150) { // like
+    if (deltaX > 150) {
       card.style.transform = "translateX(400px) rotate(20deg)";
       setTimeout(() => reaccionar("like"), 400);
-    } else if (deltaX < -150) { // descartar
+    } else if (deltaX < -150) {
       card.style.transform = "translateX(-400px) rotate(-20deg)";
       setTimeout(() => reaccionar("descartar"), 400);
     } else {
@@ -100,18 +202,24 @@ cards.forEach(card => {
     }
   });
 
-  // soporte touch
+  card.addEventListener("mouseleave", () => {
+    if (!isDragging) return;
+    isDragging = false;
+    card.style.transition = "transform 0.2s ease";
+    card.style.transform = "translateX(0) rotate(0)";
+  });
+
   card.addEventListener("touchstart", e => {
     startX = e.touches[0].clientX;
     isDragging = true;
     card.style.transition = "none";
-  });
+  }, { passive: true });
 
   card.addEventListener("touchmove", e => {
     if (!isDragging) return;
     const deltaX = e.touches[0].clientX - startX;
     card.style.transform = `translateX(${deltaX}px) rotate(${deltaX / 20}deg)`;
-  });
+  }, { passive: true });
 
   card.addEventListener("touchend", e => {
     if (!isDragging) return;
@@ -132,19 +240,28 @@ cards.forEach(card => {
   });
 });
 
-// --- Botones que fuerzan swipe ---
-document.getElementById("btn-like").addEventListener("click", () => {
-  const card = cards[currentIndex];
-  card.style.transition = "transform 0.4s ease";
-  card.style.transform = "translateX(400px) rotate(20deg)";
-  setTimeout(() => reaccionar("like"), 400);
-});
+// --- Botones ---
+const btnLike = document.getElementById("btn-like");
+const btnDescartar = document.getElementById("btn-descartar");
 
-document.getElementById("btn-descartar").addEventListener("click", () => {
-  const card = cards[currentIndex];
-  card.style.transition = "transform 0.4s ease";
-  card.style.transform = "translateX(-400px) rotate(-20deg)";
-  setTimeout(() => reaccionar("descartar"), 400);
-});
+if (btnLike) {
+  btnLike.addEventListener("click", () => {
+    if (!cards.length) return;
+    const card = cards[currentIndex];
+    card.style.transition = "transform 0.4s ease";
+    card.style.transform = "translateX(400px) rotate(20deg)";
+    setTimeout(() => reaccionar("like"), 400);
+  });
+}
+
+if (btnDescartar) {
+  btnDescartar.addEventListener("click", () => {
+    if (!cards.length) return;
+    const card = cards[currentIndex];
+    card.style.transition = "transform 0.4s ease";
+    card.style.transform = "translateX(-400px) rotate(-20deg)";
+    setTimeout(() => reaccionar("descartar"), 400);
+  });
+}
 </script>
 {% endblock %}

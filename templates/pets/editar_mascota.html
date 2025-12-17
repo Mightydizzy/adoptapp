@@ -30,11 +30,6 @@
       <form id="editForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <!-- Aviso de campos no editables futuro -->
-        <div class="alert alert-warning py-2">
-          Por ahora puedes modificar todo, pero en el futuro solo se podrá editar: <strong>Nombre, Ciudad/Comuna, Descripción y Foto</strong>.
-        </div>
-
         <div class="row g-3 mb-2">
           <div class="col-md-6">
             <label class="form-label d-block">Nombre</label>
@@ -64,23 +59,6 @@
             {{ form.ciudad }}
           </div>
 
-          <div class="col-md-4">
-            <label class="form-label d-block">Especie</label>
-            {{ form.especie }}
-          </div>
-          <div class="col-md-4">
-            <label class="form-label d-block">Sexo</label>
-            {{ form.sexo }}
-          </div>
-          <div class="col-md-4">
-            <label class="form-label d-block">Tamaño</label>
-            {{ form.tamaño }}
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label d-block">Edad (meses)</label>
-            {{ form.edad_meses }}
-          </div>
 
           <!-- Descripción al final -->
           <div class="col-12 mt-2">
